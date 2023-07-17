@@ -7,4 +7,10 @@
 
 struct Customer {
     let number: Int
+    let work: Work
+}
+
+enum Work: CaseIterable {
+    case deposit
+    case lone
 }
