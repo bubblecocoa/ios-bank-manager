@@ -16,7 +16,8 @@
 2. [실행화면](#실행-화면)
 3. [시각화된 프로젝트 구조](#시각화된-프로젝트-구조)
 4. [트러블 슈팅](#트러블-슈팅)
-5. [참고링크](#참고링크)
+5. [주요 학습 내용](#주요-학습-내용)
+6. [참고링크](#참고링크)
 
 </br>
 
@@ -42,7 +43,7 @@
             <td>2023-07-12</td>
             <td>
                 Node의 data에 private(set) 키워드 추가 </br>
-                Queue Unit Test 몇 테스트 케이스 동적으로 변경 </br>
+                Queue Unit Test 및 테스트 케이스 동적으로 변경 </br>
             </td>
         </tr>
         <tr>
@@ -59,6 +60,25 @@
             <td>2023-07-14</td>
             <td>
                 매직 리터럴을 분리 </br>
+            </td>
+        </tr>
+        <tr>
+            <td>2023-07-17</td>
+            <td>
+                ServiceType 구조체 생성 </br>
+            </td>
+        </tr>
+        <tr>
+            <td>2023-07-18</td>
+            <td>
+                BankClerk 구조체 수정 </br>
+                Bank 구조체 수정 </br>
+            </td>
+        </tr>
+        <tr>
+            <td>2023-07-19</td>
+            <td>
+                파일트리 정리 </br>
             </td>
         </tr>
     </tbody>
@@ -80,10 +100,23 @@
 ## 👀 시각화된 프로젝트 구조
 
 ### 💎 클래스 다이어그램
-프로젝트 진행에 따라 추가 예정
+![](https://hackmd.io/_uploads/BJYLriD93.png)
 
 ### 🗂️ 폴더구조
-프로젝트 진행에 따라 추가 예정
+```
+BankManagerConsoleApp
+├── main.swift
+├── BankModel
+│   ├── Bank.swift
+│   ├── BankClerk.swift
+│   ├── BankManager.swift
+│   ├── Customer.swift
+│   └── ServiceType.swift
+└── Collection
+    ├── CustomerWaitingQueue.swift
+    ├── LinkedList.swift
+    └── Node.swift
+```
 
 </br>
 
@@ -134,7 +167,46 @@ func work(customerNumber: Int) {
 }
 ```
 
+</br>
+
+<a id="주요-학습-내용"></a>
+
+## 📚 주요 학습 내용
+
+### 1️⃣ 콘솔앱의 DispatchGroup.wait()
+```swift
+mutating func work() {
+    ...
+    let group = DispatchGroup()
+    // 비동기 작업
+    group.wait()
+    // DispatchGroup의 작업이 모두 종료된 뒤 실행을 원하는 작업
+}
+```
+위와 같은 코드를 작성했을 때 작업을 `DispatchQueue.global().async`로 지정하여 메인 스레드가 아닌곳에서 작업해도 결국 `group.wait()`은 메인 스레드에서 일어나는 것으로 확인되었습니다.
+
+메인 스레드가 멈추는 것은 위험하기 때문에 저희는 코드를 아래와 같이 수정하였습니다.
+```swift
+mutating func work() {
+    ...
+    DispatchQueue.global().async {
+        let group = DispatchGroup()
+        // 비동기 작업
+        group.wait()
+        // DispatchGroup의 작업이 모두 종료된 뒤 실행을 원하는 작업
+    }
+}
+```
+저희는 해당 코드를 통해 메인이 아닌 다른 스레드에서 모든 작업이 수행된 후 원하는 작업이 실행되는 것을 확인할 수 있었습니다.
+하지만 한가지 문제가 있었는데, 순차 실행을 원하는 것은 `work()`메서드 뿐만이 아니라 `work()`메서드 밖의 코드에서도 마찬가지였습니다.
+이렇게 코드를 변경하게 되면 `work()`메서드 내의 비동기 작업이 완료된 후 수행되어야 하는 작업에 대한 순서를 보장할 수 없었습니다.
+이번에는 순서 보장을 생각하며 `DispatchQueue.global().sync`로 코드를 변경했습니다. 결과는 원하는대로 출력되었으나, 작업 스레드를 확인 해보니 메인 스레드라는 것이 확인되었습니다. 분명 `global()`로 선언했는데 왜 메인 스레드에서 작업이 수행되었습니다. `Serial Queue`의 경우 작업이 `global()`로 지정되어 있어도 메인 스레드의 작업이 비어있으면, 메인 스레드가 작업을 할당받을 수도 있다는 것을 알게되었습니다.
+
+결론적으로 **콘솔 앱**에서는 `print` 출력 순서를 보장하려면 메인 스레드의 정지가 필요합니다. `RunLoop`를 직접 수정하는 방법도 있다고 들었지만, 콘솔 앱 내에 저희 코드에서는 메인스레드가 멈추어도 상관없는 상태입니다. 또한 UI 앱으로 넘어가면 `DispatchGroup.wait()`로  `print()`의 순서보장을 해 줄 필요가 없습니다. 때문에 저희는 원래 코드로 원복하는것으로 해당 작업을 마무리 지었습니다.
+
 <a id="참고링크"></a>
 
 ## 🔗 참고링크
 - [🍎 Developer Apple - sleep(forTimeInterval:)](https://developer.apple.com/documentation/foundation/thread/1413673-sleep)
+- [🍎 Developer Apple - wait()](https://developer.apple.com/documentation/dispatch/dispatchgroup/2016090-wait)
+- [🐻 야곰닷넷 - 동시성 프로그래밍](https://yagom.net/courses/%eb%8f%99%ec%8b%9c%ec%84%b1-%ed%94%84%eb%a1%9c%ea%b7%b8%eb%9e%98%eb%b0%8d-concurrency-programming/)
