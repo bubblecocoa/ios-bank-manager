@@ -22,7 +22,7 @@
 		CB0451AF2A6A0F08004EA7D5 /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0451AE2A6A0F08004EA7D5 /* Customer.swift */; };
 		CB0451B12A6A0FAB004EA7D5 /* BankClerk.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0451B02A6A0FAB004EA7D5 /* BankClerk.swift */; };
 		CB0451B32A6A0FB8004EA7D5 /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0451B22A6A0FB8004EA7D5 /* Bank.swift */; };
-		CB94FAFA2A6816A5008B683A /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB94FAF92A6816A5008B683A /* MainView.swift */; };
+		CB94FAFA2A6816A5008B683A /* MainStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB94FAF92A6816A5008B683A /* MainStackView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,7 +64,7 @@
 		CB0451AE2A6A0F08004EA7D5 /* Customer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		CB0451B02A6A0FAB004EA7D5 /* BankClerk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BankClerk.swift; sourceTree = "<group>"; };
 		CB0451B22A6A0FB8004EA7D5 /* Bank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
-		CB94FAF92A6816A5008B683A /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		CB94FAF92A6816A5008B683A /* MainStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainStackView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,7 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				C7694E45259C3EA20053667F /* LaunchScreen.storyboard */,
-				CB94FAF92A6816A5008B683A /* MainView.swift */,
+				CB94FAF92A6816A5008B683A /* MainStackView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -333,7 +333,7 @@
 				C7694E3B259C3E9F0053667F /* AppDelegate.swift in Sources */,
 				C7694E3D259C3E9F0053667F /* SceneDelegate.swift in Sources */,
 				CB0451A52A6A06F7004EA7D5 /* Node.swift in Sources */,
-				CB94FAFA2A6816A5008B683A /* MainView.swift in Sources */,
+				CB94FAFA2A6816A5008B683A /* MainStackView.swift in Sources */,
 				C7D65D1E259C81BD005510E0 /* BankManager.swift in Sources */,
 				CB0451B12A6A0FAB004EA7D5 /* BankClerk.swift in Sources */,
 				CB0451AF2A6A0F08004EA7D5 /* Customer.swift in Sources */,

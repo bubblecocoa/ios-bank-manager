@@ -23,6 +23,7 @@ struct BankClerk {
             print("\(customer.number)번 고객 \(serviceType.description)업무 시작")
             Thread.sleep(forTimeInterval: serviceType.workTime)
             print("\(customer.number)번 고객 \(serviceType.description)업무 종료")
+            // 뷰의 작업중 인원에서 제거하기
             
             semaphore.signal()
         }

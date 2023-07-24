@@ -25,8 +25,8 @@ struct BankManager {
     }
     
     private func openBank() {
-        var bank = Bank(customerWaitingQueue: occurrenceCustomer())
-        bank.work()
+//        var bank = Bank(customerWaitingQueue: occurrenceCustomer())
+//        bank.work()
     }
     
     private func occurrenceCustomer() -> CustomerWaitingQueue<Customer> {

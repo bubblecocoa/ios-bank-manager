@@ -7,7 +7,14 @@
 
 import UIKit
 
+protocol MainStackViewDelegate: AnyObject {
+    func addWaitingCustomer()
+    func initialization()
+}
+
 class MainStackView: UIStackView {
+    weak var mainStackViewDelegate: MainStackViewDelegate?
+    
     private let buttonStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -23,6 +30,7 @@ class MainStackView: UIStackView {
         button.setTitleColor(.systemBlue, for: .normal)
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
+        button.addTarget(self, action: #selector(didTappedAddCustomerButton), for: .touchUpInside)
 
         return button
     } ()
@@ -31,6 +39,9 @@ class MainStackView: UIStackView {
         let button = UIButton()
         button.setTitle("초기화", for: .normal)
         button.setTitleColor(.systemRed, for: .normal)
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
+        button.addTarget(self, action: #selector(didTappedInitializationButton), for: .touchUpInside)
 
         return button
     } ()
@@ -96,6 +107,7 @@ class MainStackView: UIStackView {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
+        stackView.spacing = 8
 
         return stackView
     } ()
@@ -111,6 +123,7 @@ class MainStackView: UIStackView {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
+        stackView.spacing = 8
 
         return stackView
     } ()
@@ -161,6 +174,46 @@ class MainStackView: UIStackView {
         setupWorkingScrollViewConstraints()
         setupWorkingStackViewConstraints()
     }
+    
+    func addToWaitingStackView(label: UILabel) {
+        waitingStackView.addArrangedSubview(label)
+    }
+    
+    private func addToWorkingStackView(label: UILabel) {
+        workingStackView.addArrangedSubview(label)
+    }
+    
+    func assignWork() {
+        guard let label = waitingStackView.arrangedSubviews.first as? UILabel else { return }
+        addToWorkingStackView(label: label)
+    }
+    
+    func initalization() {
+        workingTimeLabel.text = "업무시간 - 00:00:000"
+        removeAllFromWaitingStackView()
+        removeAllFromWorkingStackView()
+    }
+    
+    private func removeAllFromWaitingStackView() {
+        waitingStackView.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
+    }
+    
+    private func removeAllFromWorkingStackView() {
+        workingStackView.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
+    }
+    
+    // MARK: - Delegate
+    @objc func didTappedAddCustomerButton() {
+        mainStackViewDelegate?.addWaitingCustomer()
+    }
+    
+    @objc func didTappedInitializationButton() {
+        mainStackViewDelegate?.initialization()
+    }
 }
 
 // MARK: - Contraints
@@ -199,34 +252,36 @@ extension MainStackView {
     }
     
     private func setupWaitingScrollViewConstraints() {
-        NSLayoutConstraint.activate([
-            waitingScrollView.frameLayoutGuide.topAnchor.constraint(equalTo: customerListStackView.topAnchor),
-            waitingScrollView.frameLayoutGuide.bottomAnchor.constraint(equalTo: customerListStackView.bottomAnchor)
-        ])
+//        NSLayoutConstraint.activate([
+//            waitingScrollView.frameLayoutGuide.topAnchor.constraint(equalTo: customerListStackView.topAnchor),
+//            waitingScrollView.frameLayoutGuide.bottomAnchor.constraint(equalTo: customerListStackView.bottomAnchor)
+//        ])
     }
     
     private func setupWaitingStackViewConstraints() {
         NSLayoutConstraint.activate([
             waitingStackView.leadingAnchor.constraint(equalTo: waitingScrollView.contentLayoutGuide.leadingAnchor),
             waitingStackView.trailingAnchor.constraint(equalTo: waitingScrollView.contentLayoutGuide.trailingAnchor),
-            waitingStackView.topAnchor.constraint(equalTo: waitingScrollView.contentLayoutGuide.topAnchor),
-            waitingStackView.bottomAnchor.constraint(equalTo: waitingScrollView.contentLayoutGuide.bottomAnchor)
+            waitingStackView.topAnchor.constraint(equalTo: waitingScrollView.contentLayoutGuide.topAnchor, constant: 16),
+            waitingStackView.bottomAnchor.constraint(equalTo: waitingScrollView.contentLayoutGuide.bottomAnchor),
+            waitingStackView.widthAnchor.constraint(equalTo: waitingScrollView.frameLayoutGuide.widthAnchor, multiplier: 1)
         ])
     }
     
     private func setupWorkingScrollViewConstraints() {
-        NSLayoutConstraint.activate([
-            workingScrollView.frameLayoutGuide.topAnchor.constraint(equalTo: customerListStackView.topAnchor),
-            workingScrollView.frameLayoutGuide.bottomAnchor.constraint(equalTo: customerListStackView.bottomAnchor)
-        ])
+//        NSLayoutConstraint.activate([
+//            workingScrollView.frameLayoutGuide.topAnchor.constraint(equalTo: customerListStackView.topAnchor),
+//            workingScrollView.frameLayoutGuide.bottomAnchor.constraint(equalTo: customerListStackView.bottomAnchor)
+//        ])
     }
     
     private func setupWorkingStackViewConstraints() {
         NSLayoutConstraint.activate([
             workingStackView.leadingAnchor.constraint(equalTo: workingScrollView.contentLayoutGuide.leadingAnchor),
             workingStackView.trailingAnchor.constraint(equalTo: workingScrollView.contentLayoutGuide.trailingAnchor),
-            workingStackView.topAnchor.constraint(equalTo: workingScrollView.contentLayoutGuide.topAnchor),
-            workingStackView.bottomAnchor.constraint(equalTo: workingScrollView.contentLayoutGuide.bottomAnchor)
+            workingStackView.topAnchor.constraint(equalTo: workingScrollView.contentLayoutGuide.topAnchor, constant: 16),
+            workingStackView.bottomAnchor.constraint(equalTo: workingScrollView.contentLayoutGuide.bottomAnchor),
+            workingStackView.widthAnchor.constraint(equalTo: workingScrollView.frameLayoutGuide.widthAnchor, multiplier: 1, constant: -1)
         ])
     }
 }

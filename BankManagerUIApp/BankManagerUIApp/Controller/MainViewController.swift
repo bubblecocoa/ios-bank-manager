@@ -6,15 +6,22 @@
 
 import UIKit
 
+protocol MainViewControllerDelegate: AnyObject {
+    func addWorkingCustomer()
+}
+
 class MainViewController: UIViewController {
-    private var customerWaitingQueue: CustomerWaitingQueue<Customer> = CustomerWaitingQueue()
+    weak var mainViewControllerDelegate: MainViewControllerDelegate?
+    
+    private let bank = Bank()
     private var customerCount: Int = 1
     
-    private let mainStackView: MainStackView = {
+    private lazy var mainStackView: MainStackView = {
         let stackView = MainStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-
+        stackView.mainStackViewDelegate = self
+        
         return stackView
     } ()
 
@@ -41,5 +48,38 @@ class MainViewController: UIViewController {
             mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+}
+
+// MARK: - Delegate
+extension MainViewController: MainStackViewDelegate {
+    func addWaitingCustomer() {
+        for _ in 1...10 {
+            guard let serviceNeeded = ServiceType.allCases.randomElement() else { return }
+            
+            let customer = Customer(number: customerCount, serviceNeeded: serviceNeeded)
+            
+            let customorLabel: UILabel = {
+                let label = UILabel()
+                label.text = "\(customer.number) - \(customer.serviceNeeded.description)"
+                label.textColor = customer.serviceNeeded == .deposit ? .black : .systemPurple
+                label.font = UIFont.preferredFont(forTextStyle: .body)
+                label.textAlignment = .center
+                
+                return label
+            } ()
+            
+            mainStackView.addToWaitingStackView(label: customorLabel)
+            
+            bank.enqueue(customer: customer)
+            
+            customerCount += 1
+        }
+    }
+    
+    func initialization() {
+//        customerCount = 1
+//        mainStackView.initalization()
+        mainStackView.assignWork()
     }
 }
